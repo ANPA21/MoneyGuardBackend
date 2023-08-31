@@ -30,6 +30,6 @@
     "nodemon": "2.0.15"
   },
   "engines": {
-    "node": ">=NODE_JS_VERSION"
+    "node": ">=14.20.1"
   }
 }
