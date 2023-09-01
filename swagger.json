@@ -42,7 +42,7 @@
     }
   ],
   "paths": {
-    "/api/users/register": {
+    "/users/register": {
       "post": {
         "tags": [
           "User"
@@ -87,7 +87,7 @@
         }
       }
     },
-    "/api/users/login": {
+    "/users/login": {
       "post": {
         "tags": [
           "User"
@@ -128,7 +128,7 @@
         }
       }
     },
-    "/api/users/logout": {
+    "/users/logout": {
       "post": {
         "tags": [
           "User"
@@ -152,7 +152,7 @@
         }
       }
     },
-    "/api/users/current": {
+    "/users/current": {
       "get": {
         "tags": [
           "User"
