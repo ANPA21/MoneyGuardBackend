@@ -3,9 +3,13 @@ const logger = require("morgan");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 const usersRouter = require("./routes/usersRoutes/users");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(logger(formatsLogger));
 app.use(cors());
