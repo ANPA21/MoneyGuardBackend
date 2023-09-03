@@ -1,15 +1,8 @@
-const { transactions: service } = require('../../services');
+const { transactions: service } = require("../../services");
 
-const getTransactions = async ({ user: { id } }, res) => {
-    const result = await service.getTransactions(id);
+const getTransactions = async ({ user: { _id } }, res) => {
+  const result = await service.getTransactions(_id);
 
-    return res.json({
-        status: 'Success',
-        code: 200,
-        data: {
-            total: result.length,
-            result,
-        },
-    });
+  return res.json(result);
 };
 module.exports = getTransactions;

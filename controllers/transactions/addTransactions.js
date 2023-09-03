@@ -1,28 +1,23 @@
-const { nanoid } = require('nanoid');
-const { users, transactions: service } = require('../../services');
+const { transactions: service } = require("../../services");
 
+// const addTransactions = async ({ body, user: { _id, balance } }, res) => {
+//   if (body.type === "income") {
+//     const updatedBalance = (balance += body.money);
+//     await users.updateUser(_id, { balance: updatedBalance });
+//   }
+//   if (body.type === "expense") {
+//     const updatedBalance = (balance -= body.money);
+//     await users.updateUser(_id, { balance: updatedBalance });
+//   }
 
-const addTransactions = async ({ body, user: { id, balance } }, res) => {
-    const transactionId = nanoid();
-    if (body.type === 'income') {
-        const updatedBalance = (balance += body.money);
-        await users.updateUser(id, { balance: updatedBalance });
-    }
-    if (body.type === 'spend') {
-        const updatedBalance = (balance -= body.money);
-        await users.updateUser(id, { balance: updatedBalance });
-    }
+//   const result = await service.addTransactions({ ...body });
 
+//   return res.status(201).json(result);
+// };
 
-    const result = await service.addTransactions(id, { ...body, id: transactionId }, balance);
+const addTransactions = async ({ body, user: { _id } }, res) => {
+  const result = await service.addTransactions(_id, body);
 
-    return res.status(201).json({
-        status: 'Created',
-        code: 201,
-        data: {
-            result,
-        },
-    });
+  return res.status(201).json(result);
 };
-
 module.exports = addTransactions;
