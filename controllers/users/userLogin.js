@@ -14,7 +14,7 @@ const userLogin = async (req, res) => {
   const pwCompare = await bcrypt.compare(password, user.password);
 
   if (!pwCompare) {
-    throw requestError(401, "Incorrect x email or pasword");
+    throw requestError(401, "Incorrect email or pasword");
   }
 
   const token = generateToken(user.id);
