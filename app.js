@@ -8,6 +8,8 @@ const swaggerDocument = require('./swagger.json');
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 const usersRouter = require("./routes/usersRoutes/users");
+const transactionsRouter = require("./routes/api/transactions");
+
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -15,7 +17,13 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
+
+// routers
+
 app.use("/users", usersRouter);
+app.use("/api/transactions", transactionsRouter)
+
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
