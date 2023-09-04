@@ -1,76 +1,9 @@
-const { Schema, model } = require("mongoose");
-const Joi = require("joi");
-const { handleSaveErrors } = require("../helpers");
+const { model } = require("mongoose");
 
-const transactionSchema = new Schema(
-    {
-        balance: { type: Number },
-        comment: {
-            type: String,
-            default: "",
-        },
-        owner: {
-            type: Schema.Types.ObjectId,
-            ref: "user",
-            required: true,
-        },
-        type: {
-            type: String,
-            enum: ["expense", "income"],
-            default: "income",
-        },
-        category: {
-            type: String,
-            ref: "category",
-            required: function () {
-                return this.type === "expense";
-            },
-            enum: [
-                "Products",
-                "Car",
-                "Main expenses",
-                "Education",
-                "Entertainment",
-                "Self care",
-                "Leisure",
-                "Other expenses",
-                "Education",
-                "Household products",
-            ],
-        },
-        value: {
-            type: Number,
-            min: 0,
-            required: [true, "Funds value is required"],
-        },
-    },
-    { versionKey: false, timestamps: true }
-);
 
-transactionSchema.post("save", handleSaveErrors);
+const { transactionMongoSchema } = require("../schemas/transactionsSchemas");
 
-const addSchema = Joi.object({
-    balance: Joi.number(),
-    date: Joi.string(),
-    month: Joi.string(),
-    year: Joi.string(),
-    comment: Joi.string(),
-    type: Joi.string().valid("expense", "income").required(),
-    category: Joi.when("type", {
-        is: "expense",
-        then: Joi.string().required(),
-        otherwise: Joi.forbidden(), // Если type !== 'expense', то category не должен быть
-    }),
-    money: Joi.number().min(0).required(),
-});
+const Transaction = model("transactions", transactionMongoSchema);
 
-const schemas = {
-    addSchema,
-};
 
-const Transaction = model("transactions", transactionSchema);
-
-module.exports = {
-    Transaction,
-    schemas,
-};
+module.exports = Transaction;
