@@ -1,14 +1,14 @@
-const { Transaction } = require('../../models/transactions.model');
+const Transaction = require('../../models/transactions.model');
 const { RequestError } = require('../../helpers');
 
 const deleteTransaction = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const transaction = await Transaction.findByIdAndRemove(id);
+        const { _id } = req.params;
+        const transaction = await Transaction.findByIdAndRemove(_id);
 
-        if (!transaction) {
-            throw RequestError(404, 'Transaction not found');
-        }
+        // if (!transaction) {
+        //     throw RequestError(404, 'Transaction not found');
+        // }
 
         res.json({
             status: 'Success',
