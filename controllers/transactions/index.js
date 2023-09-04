@@ -3,6 +3,7 @@ const getTransactions = require("./getTransactions");
 const getStatistics = require("./getStatistics");
 const updateTransactions = require("./updateTransactions");
 const deleteTransaction = require('./deleteTransaction');
+const getAllByCategory = require('./getAllByCategory');
 
 module.exports = {
     addTransactions,
@@ -10,4 +11,5 @@ module.exports = {
     getStatistics,
     updateTransactions,
     deleteTransaction,
+    getAllByCategory,
 };
