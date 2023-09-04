@@ -1,0 +1,22 @@
+const Joi = require("joi");
+
+const addTransactionsSchema = Joi.object({
+  balance: Joi.number(),
+  date: Joi.string(),
+  month: Joi.string(),
+  year: Joi.string(),
+  comment: Joi.string(),
+  type: Joi.string().valid("expense", "income").required(),
+  category: Joi.when("type", {
+    is: "expense",
+    then: Joi.string().required(),
+    otherwise: Joi.forbidden(), // Если type !== 'expense', то category не должен быть
+  }),
+  money: Joi.number().min(0).required(),
+});
+
+const schemas = {
+  addTransactionsSchema,
+};
+
+module.exports = schemas;
