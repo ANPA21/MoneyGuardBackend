@@ -1,70 +1,74 @@
-// const { transactions: service } = require('../../services');
+const { RequestError } = require('../../helpers');
+const Transaction = require('../../models/transactions.model');
 
-// const getStatistics = async ({ user: { id }, query }, res) => {
-//     const amountMoney = array => array.reduce((acc, { money }) => acc + money, 0);
-//     const amountCategories = array =>
-//         array.reduce((acc, value) => {
-//             const category = value.category.name;
-//             const { money } = value;
+// calculating start date & end date
+function getMonthStartAndEnd(year, month) {
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 0);
+  endDate.setHours(23, 59, 59, 999);
+  return { startDate, endDate };
+}
 
-//             acc[category]
-//                 ? (acc[category] = acc[category] += money)
-//                 : (acc[category] = money);
+// calculating the total amount for a custom period
+async function calculateTotalForCustomPeriod(userId, startDate, endDate, type) {
+  try {
+    const result = await Transaction.aggregate([
+      {
+        $match: {
+          owner: userId,
+          type,
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$value' }, // if the field name is 'value'!!!!!!!!!!!!!!!!!!!!!!!
+        },
+      },
+    ]);
+    return result.length > 0 ? result[0].totalAmount : 0;
+  } catch (err) {
+    throw RequestError;
+  }
+}
 
-//             return acc;
-//         }, {});
-//     //
-//     const getUniqueMonth = array =>
-//         array.reduce((acc, { month }) => {
-//             if (!acc.includes(month)) {
-//                 acc.push(month);
-//             }
-//             return acc;
-//         }, []);
-//     const getUniqueYear = array =>
-//         array.reduce((acc, { year }) => {
-//             if (!acc.includes(year)) {
-//                 acc.push(year);
-//             }
-//             return acc;
-//         }, []);
+// getting statistics
+async function getStatistics(req, res) {
+  const userId = req.user._id;
+  const { month, year } = req.query;
 
-//     let totalIncomeArr;
-//     let totalSpendArr;
+  try {
+    const { startDate, endDate } = getMonthStartAndEnd(year, month);
+    const totalIncome = await calculateTotalForCustomPeriod(
+      userId,
+      startDate,
+      endDate,
+      'income'
+    );
+    const totalExpenses = await calculateTotalForCustomPeriod(
+      userId,
+      startDate,
+      endDate,
+      'expense'
+    );
 
-//     if (query.month && query.year) {
-//         totalIncomeArr = await service.getAllIncomeByDate(
-//             id,
-//             query.month,
-//             query.year,
-//         );
-//         totalSpendArr = await service.getAllSpendByDate(
-//             id,
-//             query.month,
-//             query.year,
-//         );
-//     } else {
-//         totalIncomeArr = await service.getAllIncome(id);
-//         totalSpendArr = await service.getAllSpend(id);
-//     }
+    const balance = totalIncome - totalExpenses;
 
-//     const totalIncome = amountMoney(totalIncomeArr);
-//     const totalSpend = amountMoney(totalSpendArr);
-//     const categoriesSummary = amountCategories(totalSpendArr);
-//     const uniqueMonth = getUniqueMonth(totalSpendArr);
-//     const uniqueYear = getUniqueYear(totalSpendArr);
+    res.status(200).json({
+      totalIncome,
+      totalExpenses,
+      balance,
+    });
+  } catch (err) {
+    console.error('Error calculating statistics:', err);
+    res.status(500).json({ error: 'Error calculating statistics' });
+  }
+}
 
-//     return res.json({
-//         status: 'Success',
-//         code: 200,
-//         data: {
-//             categoriesSummary,
-//             totalIncome,
-//             totalSpend,
-//             uniqueMonth: uniqueMonth.sort(),
-//             uniqueYear: uniqueYear.sort(),
-//         },
-//     });
-// };
-
-// module.exports = getStatistics;
+module.exports = {
+  getStatistics,
+};
