@@ -1,11 +1,11 @@
 const ctrlWrapper = require("./ctrlWrapper");
-const requestError = require("./requestError");
+const RequestError = require("./requestError");
 const generateToken = require("./generateToken");
 const handleSaveErrors = require("./handleSaveErrors");
 
 module.exports = {
   ctrlWrapper,
-  requestError,
+  RequestError,
   generateToken,
   handleSaveErrors
 };

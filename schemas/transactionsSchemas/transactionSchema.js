@@ -2,9 +2,8 @@ const { Schema } = require("mongoose");
 
 const { handleSaveErrors } = require("../../helpers");
 
-const transactionMongoSchema = new Schema(
+const transactionSchema = new Schema(
   {
-    balance: { type: Number },
     comment: {
       type: String,
       default: "",
@@ -47,7 +46,7 @@ const transactionMongoSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-transactionMongoSchema.post("save", handleSaveErrors);
+transactionSchema.post("save", handleSaveErrors);
 
-module.exports = transactionMongoSchema;
+module.exports = transactionSchema;
 

@@ -3,8 +3,8 @@ const messages = {
   401: "Unauthorized",
   403: "Forbbiden",
   404: "Not found",
-  409: "Conflict",
-};
+  409: "Conflict"
+}
 
 const RequestError = (status, message = messages[status]) => {
   const error = new Error(message);
