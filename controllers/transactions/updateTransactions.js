@@ -1,4 +1,4 @@
-const { Transaction } = require("../../models/transactions.model")
+const Transaction = require("../../models/transactions.model")
 
 const { RequestError } = require("../../helpers")
 
@@ -12,3 +12,4 @@ const updateTransactions = async (req, res) => {
 }
 
 module.exports = updateTransactions;
+
