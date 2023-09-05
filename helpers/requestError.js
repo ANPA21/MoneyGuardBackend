@@ -1,9 +1,9 @@
 const messages = {
-  400: "Bad Request",
-  401: "Unauthorized",
-  403: "Forbbiden",
-  404: "Not found",
-  409: "Conflict",
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbbiden',
+  404: 'Not found',
+  409: 'Conflict',
 };
 
 const requestError = (status, message = messages[status]) => {
