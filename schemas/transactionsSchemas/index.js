@@ -1,8 +1,8 @@
 const addTransactionsSchema = require("./addTransactionsSchema");
-const transactionMongoSchema = require("./transactionMongoSchema");
+const transactionSchema = require("./transactionSchema");
 
 
 module.exports = {
   addTransactionsSchema,
-  transactionMongoSchema
+  transactionSchema,
 };

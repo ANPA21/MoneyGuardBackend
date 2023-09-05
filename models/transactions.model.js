@@ -1,9 +1,9 @@
 const { model } = require("mongoose");
 
 
-const { transactionMongoSchema } = require("../schemas/transactionsSchemas");
+const { transactionSchema } = require("../schemas/transactionsSchemas");
 
-const Transaction = model("transactions", transactionMongoSchema);
+const Transaction = model("transactions", transactionSchema);
 
 
 module.exports = Transaction;

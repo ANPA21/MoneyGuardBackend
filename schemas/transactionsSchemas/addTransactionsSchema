@@ -15,8 +15,6 @@ const addTransactionsSchema = Joi.object({
   money: Joi.number().min(0).required(),
 });
 
-const schemas = {
-  addTransactionsSchema,
-};
 
-module.exports = schemas;
+
+module.exports = addTransactionsSchema;
