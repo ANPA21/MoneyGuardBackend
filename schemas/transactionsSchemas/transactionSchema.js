@@ -4,7 +4,6 @@ const { handleSaveErrors } = require("../../helpers");
 
 const transactionSchema = new Schema(
   {
-    balance: { type: Number },
     comment: {
       type: String,
       default: "",
@@ -38,7 +37,7 @@ const transactionSchema = new Schema(
         "Household products",
       ],
     },
-    money: {
+    value: {
       type: Number,
       min: 0,
       required: [true, "Funds value is required"],
