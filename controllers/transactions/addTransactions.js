@@ -1,23 +1,12 @@
-const { transactions: service } = require("../../services");
+const Transaction = require("../../models/transactions.model");
 
-// const addTransactions = async ({ body, user: { _id, balance } }, res) => {
-//   if (body.type === "income") {
-//     const updatedBalance = (balance += body.money);
-//     await users.updateUser(_id, { balance: updatedBalance });
-//   }
-//   if (body.type === "expense") {
-//     const updatedBalance = (balance -= body.money);
-//     await users.updateUser(_id, { balance: updatedBalance });
-//   }
-
-//   const result = await service.addTransactions({ ...body });
-
-//   return res.status(201).json(result);
-// };
 
 const addTransactions = async ({ body, user: { _id } }, res) => {
-  const result = await service.addTransactions(_id, body);
-
-  return res.status(201).json(result);
+  try {
+    const transaction = await Transaction.create({ owner: _id, ...body });
+    res.status(201).json(transaction);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 module.exports = addTransactions;
