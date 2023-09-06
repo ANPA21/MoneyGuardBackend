@@ -1,20 +1,15 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const categoriesFilePath = path.join(
-  __dirname,
-  '..',
-  '..',
-  'categoriesList.json'
-);
+const categoriesFilePath = path.join(__dirname, '..', 'categoriesList.json');
 
-const getCategories = async (req, res, next) => {
+const getCategories = async () => {
   try {
     const data = await fs.readFile(categoriesFilePath, 'utf8');
     const categories = JSON.parse(data);
-    res.json(categories);
+    return categories;
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 };
 

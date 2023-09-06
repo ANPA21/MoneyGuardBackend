@@ -5,9 +5,6 @@ const ctrlWrapper = require('../../helpers/ctrlWrapper');
 const router = express.Router();
 const validateBody = require('../../middleware/validateBody');
 const {
-  getCategories,
-} = require('../../controllers/transactions/getCategories');
-const {
   editTransactionsSchema,
   addTransactionsSchema,
 } = require('../../schemas/transactionsSchemas');
@@ -16,7 +13,7 @@ const {
 router.get('/', authentication, ctrlWrapper(ctrl.getTransactions));
 
 // GET all /categories
-router.get('/categories', authentication, getCategories);
+router.get('/categories', authentication, ctrl.getCategories);
 
 // GET /transactions/statistics
 // GET /transactions/statistics?month=00&year=0000
