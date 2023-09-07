@@ -1,6 +1,6 @@
 const getCurrent = async (req, res) => {
-  const { email, subscription } = req.user;
+  const { email, name } = req.user;
 
-  res.status(200).json({ email, subscription });
+  res.status(200).json({ email, name });
 };
 module.exports = getCurrent;
