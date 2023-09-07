@@ -1,12 +1,12 @@
-const { requestError } = require("../../helpers");
-const User = require("../../models/user");
-const bcrypt = require("bcryptjs");
+const { requestError } = require('../../helpers');
+const User = require('../../models/user');
+const bcrypt = require('bcryptjs');
 
 const userRegister = async (req, res) => {
   const { name, email, password } = req.body;
   const user = await User.findOne({ email });
   if (user) {
-    throw requestError(409, "Email already in use");
+    throw requestError(409, 'Email already in use');
   }
   const hashPassword = await bcrypt.hash(password, 10);
 
