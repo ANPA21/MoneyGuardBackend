@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "2.0.0",
-    "title": "Wallet API",
+    "version": "2.0.2",
+    "title": "MoneyGuard",
     "description": "Final project GoIT bl_team-1",
     "license": {
       "name": "MIT",
@@ -219,7 +219,7 @@
                   "type": "array",
                   "description": "Transactions List",
                   "items": {
-                    "$ref": "#"
+                    "$ref": "#/components/schemas/TransactionResponse"
                   }
                 }
               }
@@ -264,7 +264,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#"
+                "$ref": "#/components/schemas/TransactionResponse"
               }
             }
           }
@@ -278,7 +278,7 @@
                   "type": "array",
                   "description": "Users transactions list",
                   "items": {
-                    "$ref": "#"
+                    "$ref": "#/components/schemas/TransactionResponse"
                   }
                 }
               }
@@ -352,7 +352,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#"
+                "$ref": "#/components/schemas/updateTransactionRequest"
               }
             }
           }
@@ -363,13 +363,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#"
+                  "$ref": "#/components/schemas/getTransactionSuccessResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request response",
+            "description": "Bad request",
             "content": {}
           },
           "404": {
@@ -408,7 +408,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request response",
             "content": {}
           },
           "404": {
@@ -421,7 +421,7 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Get transaction by ID",
+        "summary": "Getting transaction by ID",
         "parameters": [
           {
             "in": "path",
@@ -445,7 +445,114 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#"
+                  "$ref": "#/components/schemas/getTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {}
+          },
+          "404": {
+            "description": "Not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/statistics": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "Get all statistics.",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Statistics"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Error"
+                    },
+                    "code": {
+                      "type": "number",
+                      "example": "401"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Fail"
+                    },
+                    "code": {
+                      "type": "number",
+                      "example": "500"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get categories",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "List of categories",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoriesResponse"
+                  }
                 }
               }
             }
@@ -453,9 +560,55 @@
           "400": {
             "description": "Bad request",
             "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Add categories",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "description": "New category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "expense": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "List of categories",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoriesResponse"
+                  }
+                }
+              }
+            }
           },
-          "404": {
-            "description": "Not found",
+          "400": {
+            "description": "Bad request",
             "content": {}
           }
         }
@@ -550,6 +703,131 @@
             "type": "string",
             "description": "User's name",
             "format": "name"
+          }
+        }
+      },
+      "createTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Information about created transaction",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Transaction ID",
+                "example": "6042f456e080193948016539"
+              },
+              "category": {
+                "type": "string",
+                "description": "Category of transaction",
+                "example": "Beverages"
+              },
+              "value": {
+                "type": "integer",
+                "description": "Sum of transaction",
+                "example": 2020
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date of entry creation",
+                "example": "2023-09-08T23:51:48.716Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date of entry update",
+                "example": "2023-09-08T23:51:48.716Z"
+              }
+            }
+          }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "required": [
+          "date",
+          "category",
+          "sum"
+        ],
+        "properties": {
+          "type": {
+            "type": "boolean",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category ID",
+            "example": "62496a0a7bcc73d5fda678ec"
+          },
+          "name": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Salary"
+          },
+          "date": {
+            "type": "string",
+            "description": "Transaction date in YYYY-MM-DD format",
+            "example": "2023-02-09"
+          },
+          "value": {
+            "type": "number",
+            "example": 999
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Eat"
+          },
+          "id": {
+            "type": "string",
+            "example": "54362576gjhVNHVG87867"
+          }
+        }
+      },
+      "Statistics": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "categoriesSummary": {
+                "type": "object",
+                "example": "Other"
+              },
+              "income": {
+                "type": "number",
+                "example": 10000
+              },
+              "expense": {
+                "type": "number",
+                "example": 5000
+              },
+              "month": {
+                "type": "number",
+                "example": 10
+              },
+              "year": {
+                "type": "number",
+                "example": 2023
+              }
+            }
           }
         }
       }
