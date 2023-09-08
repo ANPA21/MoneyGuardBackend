@@ -2,30 +2,22 @@ const Transaction = require('../../models/transactions.model');
 const getCategories = require('../../middleware/getCategoriesFx');
 
 async function getStatistics(req, res) {
-  const userId = req.user._id;
-  const { year, month } = req.query; // пример запроса /transactions/statistics?year=2023&month=9
-
   try {
-    const transactions = await Transaction.find({
-      owner: userId,
-      createdAt: {
-        $gte: new Date(year, month - 1, 1),
-        $lt: new Date(year, month, 0),
-      },
-    });
+    const userId = req.user._id;
+    const { year, month } = req.query;
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
 
+    const transactions = await fetchTransactions(userId, startDate, endDate);
     const totalIncome = calculateTotal(transactions, 'income');
     const totalExpenses = calculateTotal(transactions, 'expense');
     const balance = totalIncome - totalExpenses;
 
-    const expenses = transactions.filter(tr => tr.type === 'expense'); // все транзакции растрат за месяц
-    const categories = await getCategories(); // затянул категории
+    const categories = await getCategories();
     const categoryExpenses = categories.map(category => ({
       name: category,
-      total: calculateCategoryTotal(
-        expenses.filter(item => item.category === category)
-      ),
-    })); // создаем массив объектов для каждой категории, с именем категории и общей суммой за категорию
+      total: calculateCategoryTotal(transactions, category),
+    }));
 
     res.status(200).json({
       totalIncome,
@@ -39,17 +31,28 @@ async function getStatistics(req, res) {
   }
 }
 
-function calculateCategoryTotal(transactions) {
-  const total = transactions.reduce(
-    (total, transaction) => total + transaction.value,
-    0
-  );
-  return total.toFixed(2);
+async function fetchTransactions(userId, startDate, endDate) {
+  return await Transaction.find({
+    owner: userId,
+    createdAt: { $gte: startDate, $lt: endDate },
+  });
 }
+
 function calculateTotal(transactions, type) {
   return transactions
     .filter(transaction => transaction.type === type)
     .reduce((total, transaction) => total + transaction.value, 0);
+}
+
+function calculateCategoryTotal(transactions, category) {
+  const categoryTransactions = transactions.filter(
+    item => item.category === category
+  );
+  const total = categoryTransactions.reduce(
+    (total, transaction) => total + transaction.value,
+    0
+  );
+  return total.toFixed(2);
 }
 
 module.exports = getStatistics;
