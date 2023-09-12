@@ -25,16 +25,16 @@ const transactionSchema = new Schema(
         return this.type === 'expense';
       },
       enum: [
+        'Main expenses',
         'Products',
         'Car',
-        'Main expenses',
-        'Education',
-        'Entertainment',
         'Self care',
+        'Child care',
+        'Household products',
+        'Education',
         'Leisure',
         'Other expenses',
-        'Education',
-        'Household products',
+        'Entertainment',
       ],
     },
     value: {
