@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.3",
   "info": {
     "version": "2.0.2",
     "title": "MoneyGuard",
@@ -33,12 +33,12 @@
       "description": "Transactions endpoints"
     },
     {
-      "name": "Categories",
-      "description": "Categories endpoints"
-    },
-    {
       "name": "Statistics",
       "description": "Statistics endpoints"
+    },
+    {
+      "name": "Categories",
+      "description": "Categories endpoints"
     }
   ],
   "paths": {
@@ -211,7 +211,7 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Success",
             "content": {
               "application/json": {
@@ -219,7 +219,7 @@
                   "type": "array",
                   "description": "Transactions List",
                   "items": {
-                    "$ref": "#/components/schemas/TransactionResponse"
+                    "$ref": "#/components/schemas/TransactionSchema"
                   }
                 }
               }
@@ -242,7 +242,7 @@
             }
           },
           "404": {
-            "description": "User not found",
+            "description": "Not found",
             "content": {}
           }
         }
@@ -264,7 +264,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TransactionResponse"
+                "$ref": "#/components/schemas/createTransactionSuccessResponse"
               }
             }
           }
@@ -278,7 +278,7 @@
                   "type": "array",
                   "description": "Users transactions list",
                   "items": {
-                    "$ref": "#/components/schemas/TransactionResponse"
+                    "$ref": "#/components/schemas/TransactionSchema"
                   }
                 }
               }
@@ -369,7 +369,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request response",
             "content": {}
           },
           "404": {
@@ -445,7 +445,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/getTransactionSuccessResponse"
+                  "$ref": "#/components/schemas/TransactionSchema"
                 }
               }
             }
@@ -461,7 +461,7 @@
         }
       }
     },
-    "/statistics": {
+    "/transactions/statistics": {
       "get": {
         "tags": [
           "Statistics"
@@ -531,7 +531,7 @@
         }
       }
     },
-    "/categories/": {
+    "/categories": {
       "get": {
         "tags": [
           "Categories"
@@ -544,56 +544,6 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "description": "List of categories",
-                  "items": {
-                    "$ref": "#/components/schemas/CategoriesResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {}
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "Add categories",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "description": "New category",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "expense": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
             "description": "Successful operation",
             "content": {
               "application/json": {
@@ -706,19 +656,78 @@
           }
         }
       },
+      "TransactionSchema": {
+        "type": "object",
+        "required": [
+          "date",
+          "category",
+          "value"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "transaction id",
+            "example": "6128aef7ae8c0635d47093fd"
+          },
+          "comment": {
+            "type": "string",
+            "description": "comment to transaction"
+          },
+          "owner": {
+            "type": "string",
+            "description": "user's id",
+            "example": "61266348626da3337cd530ff"
+          },
+          "type": {
+            "type": "string",
+            "description": "type of transaction(spend or income)",
+            "default": "income",
+            "example": "income"
+          },
+          "category": {
+            "type": "string",
+            "description": "category of transaction",
+            "example": "Car"
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "example": 1000
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "updateTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "type of transaction(spend or income)",
+            "default": "income",
+            "example": "income"
+          },
+          "category": {
+            "type": "string",
+            "description": "category of transaction",
+            "example": "Education"
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "example": 1000
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
       "createTransactionSuccessResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
           "data": {
             "type": "object",
             "description": "Information about created transaction",
@@ -728,63 +737,42 @@
                 "description": "Transaction ID",
                 "example": "6042f456e080193948016539"
               },
+              "date": {
+                "type": "string",
+                "description": "Transaction's date indicated by user",
+                "example": "2022-05-17T00:00:00.000Z"
+              },
+              "income": {
+                "type": "boolean",
+                "description": "Is transaction income",
+                "example": false
+              },
               "category": {
                 "type": "string",
                 "description": "Category of transaction",
                 "example": "Beverages"
               },
+              "comment": {
+                "type": "string",
+                "description": "User's comment about transaction",
+                "example": "Comment"
+              },
               "value": {
                 "type": "integer",
                 "description": "Sum of transaction",
-                "example": 2020
+                "example": 2120
               },
               "createdAt": {
                 "type": "string",
                 "description": "Date of entry creation",
-                "example": "2023-09-08T23:51:48.716Z"
+                "example": "2023-04-10T17:51:48.716Z"
               },
               "updatedAt": {
                 "type": "string",
                 "description": "Date of entry update",
-                "example": "2023-09-08T23:51:48.716Z"
+                "example": "2023-04-10T17:51:48.716Z"
               }
             }
-          }
-        }
-      },
-      "TransactionResponse": {
-        "type": "object",
-        "required": [
-          "date",
-          "category",
-          "sum"
-        ],
-        "properties": {
-          "type": {
-            "type": "boolean",
-            "example": false
-          },
-          "category": {
-            "type": "string",
-            "description": "Category ID",
-            "example": "62496a0a7bcc73d5fda678ec"
-          },
-          "name": {
-            "type": "string",
-            "description": "Category name",
-            "example": "Salary"
-          },
-          "date": {
-            "type": "string",
-            "description": "Transaction date in YYYY-MM-DD format",
-            "example": "2023-02-09"
-          },
-          "value": {
-            "type": "number",
-            "example": 999
-          },
-          "comment": {
-            "type": "string"
           }
         }
       },
@@ -804,29 +792,23 @@
       "Statistics": {
         "type": "object",
         "properties": {
-          "data": {
+          "totalIncome": {
+            "type": "number",
+            "example": 8000
+          },
+          "totalExpenses": {
+            "type": "number",
+            "example": 5000
+          },
+          "balance": {
+            "type": "number",
+            "example": 10000
+          },
+          "categoryExpenses": {
             "type": "object",
-            "properties": {
-              "categoriesSummary": {
-                "type": "object",
-                "example": "Other"
-              },
-              "income": {
-                "type": "number",
-                "example": 10000
-              },
-              "expense": {
-                "type": "number",
-                "example": 5000
-              },
-              "month": {
-                "type": "number",
-                "example": 10
-              },
-              "year": {
-                "type": "number",
-                "example": 2023
-              }
+            "example": {
+              "name": "car",
+              "total": "21569"
             }
           }
         }
