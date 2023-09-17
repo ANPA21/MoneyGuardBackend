@@ -6,20 +6,25 @@ const bcrypt = require('bcryptjs');
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  try {
+    if (!user) {
+      throw new Error('Incorrect email or pasword!');
+    }
 
-  if (!user) {
-    throw requestError(401, 'Incorrect email or pasword');
+    const pwCompare = await bcrypt.compare(password, user.password);
+
+    if (!pwCompare) {
+      throw new Error('Incorrect email or pasword!');
+    } else {
+      const token = generateToken(user.id);
+      await User.findByIdAndUpdate(user.id, { token });
+      res
+        .status(200)
+        .json({ token, user: { name: user.name, email: user.email } });
+    }
+  } catch (error) {
+    res.status(401).json(error.message);
   }
-
-  const pwCompare = await bcrypt.compare(password, user.password);
-
-  if (!pwCompare) {
-    throw requestError(401, 'Incorrect email or pasword');
-  }
-
-  const token = generateToken(user.id);
-  await User.findByIdAndUpdate(user.id, { token });
-  res.status(200).json({ token, user: { name: user.name, email: user.email } });
 };
 
 module.exports = userLogin;
